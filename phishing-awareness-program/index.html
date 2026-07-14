@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Phishing Awareness Training</title>
+  <meta name="description" content="An interactive training module that teaches how to spot and avoid phishing attacks." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=Newsreader:opsz,wght@6..72,500;6..72,600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <!-- ===================== SIDEBAR ===================== -->
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <span class="brand__mark" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          <path d="m9 12 2 2 4-4"/>
+        </svg>
+      </span>
+      <div>
+        <strong>PhishGuard</strong>
+        <small>Security Awareness</small>
+      </div>
+    </div>
+
+    <nav class="nav" id="nav" aria-label="Course sections"></nav>
+
+    <div class="sidebar__progress">
+      <div class="progress-label">
+        <span>Progress</span>
+        <span id="progressPct">0%</span>
+      </div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    </div>
+  </aside>
+
+  <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">☰</button>
+
+  <!-- ===================== MAIN ===================== -->
+  <main class="content" id="content">
+
+    <!-- 1. WELCOME -->
+    <section class="section" id="welcome" data-title="Welcome">
+      <span class="eyebrow">Security Awareness Training</span>
+      <h1>Don't Take the Bait.</h1>
+      <p class="lead">
+        Phishing is the number-one way attackers break into organisations. It doesn't
+        exploit software — it exploits <em>people</em>. This module trains you to
+        recognise the tricks and stop them before they cost you.
+      </p>
+
+      <div class="stat-grid">
+        <div class="stat">
+          <span class="stat__num" data-count="3400000000">0</span>
+          <span class="stat__label">phishing emails sent every day</span>
+        </div>
+        <div class="stat">
+          <span class="stat__num" data-count="91">0</span>
+          <span class="stat__label">% of cyberattacks start with a phishing email</span>
+        </div>
+        <div class="stat">
+          <span class="stat__num" data-count="4880000">0</span>
+          <span class="stat__label">average cost (USD) of a phishing breach</span>
+        </div>
+      </div>
+
+      <div class="callout callout--info">
+        <strong>What you'll learn</strong>
+        <ul>
+          <li>How to identify suspicious emails at a glance</li>
+          <li>How to spot fake login pages and fraudulent websites</li>
+          <li>The social-engineering tricks criminals rely on</li>
+          <li>Practical habits that keep you safe</li>
+        </ul>
+        <p>Work through each section, then test yourself in the quizzes. Your progress is tracked on the left.</p>
+      </div>
+
+      <button class="btn btn--primary" data-goto="email">Start the course →</button>
+    </section>
+
+    <!-- 2. SUSPICIOUS EMAILS -->
+    <section class="section" id="email" data-title="Spot the Email">
+      <span class="eyebrow">Your Inbox</span>
+      <h2>Anatomy of a Phishing Email</h2>
+      <p class="lead">Most phishing starts in your inbox. Click the <span class="hot-hint">glowing red flags</span> in the email below to learn what gives it away.</p>
+
+      <div class="email-demo">
+        <div class="email-demo__toolbar">
+          <span class="dot dot--red"></span><span class="dot dot--amber"></span><span class="dot dot--green"></span>
+          <span class="email-demo__title">Inbox — 1 new message</span>
+        </div>
+        <div class="email-demo__body">
+          <div class="email-row">
+            <span class="email-key">From:</span>
+            <span class="email-val">
+              PayPal Service
+              <button class="flag" data-flag="sender">&lt;secure@paypa1-support.com&gt;</button>
+            </span>
+          </div>
+          <div class="email-row">
+            <span class="email-key">To:</span>
+            <span class="email-val">
+              <button class="flag" data-flag="recipient">undisclosed-recipients</button>
+            </span>
+          </div>
+          <div class="email-row">
+            <span class="email-key">Subject:</span>
+            <span class="email-val">
+              <button class="flag" data-flag="subject">⚠ URGENT: Your account has been LIMITED</button>
+            </span>
+          </div>
+          <hr />
+          <p><button class="flag" data-flag="greeting">Dear Valued Customer,</button></p>
+          <p>
+            We detected <button class="flag" data-flag="pretext">unusual activity</button> on your account.
+            Your access has been temporarily limited. You must verify your identity
+            <button class="flag" data-flag="urgency">within 24 hours</button> or your account will be permanently closed.
+          </p>
+          <p>
+            <button class="flag flag--btn" data-flag="link">Verify My Account Now</button>
+          </p>
+          <p><button class="flag" data-flag="grammar">Failure to do so will results in permanent suspension of you're account.</button></p>
+          <p>
+            <button class="flag" data-flag="attachment">📎 Account_Statement.html (12 KB)</button>
+          </p>
+          <p class="email-signoff">Sincerely,<br />The PayPal Security Team</p>
+        </div>
+      </div>
+
+      <div class="flag-tally">
+        <span id="flagCount">0</span> of <span id="flagTotal">9</span> red flags found
+      </div>
+
+      <div class="callout callout--warn">
+        <strong>The 9 universal red flags</strong>
+        <ul class="checklist" id="flagChecklist"></ul>
+      </div>
+    </section>
+
+    <!-- 3. FAKE LOGIN PAGES -->
+    <section class="section" id="login" data-title="Fake Logins">
+      <span class="eyebrow">Login Pages</span>
+      <h2>Real Page or Fake Login?</h2>
+      <p class="lead">A phishing link usually leads to a pixel-perfect copy of a login page. The design is fake-proof — but the <strong>address bar</strong> never lies. Inspect both:</p>
+
+      <div class="compare">
+        <div class="compare__card">
+          <div class="browserbar browserbar--safe">
+            <span class="lock">🔒</span>
+            <span class="url"><b>https://</b>accounts.google.com/signin</span>
+          </div>
+          <div class="fakepage">
+            <div class="fakepage__logo">G</div>
+            <h4>Sign in</h4>
+            <input type="text" placeholder="Email or phone" readonly />
+            <button class="fakepage__btn">Next</button>
+          </div>
+          <div class="verdict verdict--safe">✓ Genuine — correct domain, valid certificate</div>
+        </div>
+
+        <div class="compare__card">
+          <div class="browserbar browserbar--danger">
+            <span class="lock">🔒</span>
+            <span class="url"><b>https://</b>accounts.google.com<mark>.verify-login.ru</mark>/signin</span>
+          </div>
+          <div class="fakepage">
+            <div class="fakepage__logo">G</div>
+            <h4>Sign in</h4>
+            <input type="text" placeholder="Email or phone" readonly />
+            <button class="fakepage__btn">Next</button>
+          </div>
+          <div class="verdict verdict--danger">✗ Fake — the <em>real</em> domain is <code>verify-login.ru</code></div>
+        </div>
+      </div>
+
+      <div class="callout callout--info">
+        <strong>How to read a URL like a pro</strong>
+        <p>Read the domain <b>right-to-left</b> from the first single slash. The true owner is the last two labels before that slash:</p>
+        <p class="url-anatomy">
+          https://accounts.google.com.<span class="url-real">verify-login.ru</span>/signin
+        </p>
+        <ul>
+          <li>🔒 <strong>HTTPS / the padlock means nothing.</strong> Anyone can get a free certificate — it proves the connection is encrypted, not that the site is honest.</li>
+          <li>Hover over links before clicking to preview the real destination.</li>
+          <li>Type important addresses yourself or use a bookmark — never trust an emailed link.</li>
+          <li>A password manager won't autofill on a look-alike domain. If it doesn't offer to fill, that's a warning.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 4. FRAUDULENT WEBSITES -->
+    <section class="section" id="websites" data-title="Fake Sites">
+      <span class="eyebrow">Fake Websites</span>
+      <h2>Fraudulent Websites &amp; Look-alike Domains</h2>
+      <p class="lead">Attackers register domains that <em>look</em> right at a glance. Can you tell the trap from the real thing?</p>
+
+      <div class="domain-game" id="domainGame"></div>
+
+      <div class="callout callout--warn">
+        <strong>Common domain tricks</strong>
+        <ul>
+          <li><b>Typosquatting</b> — <code>arnazon.com</code>, <code>gooogle.com</code>, <code>micros0ft.com</code></li>
+          <li><b>Homoglyphs</b> — swapping letters for look-alikes: <code>paypaI.com</code> (capital i), or Cyrillic characters that render identically to Latin ones.</li>
+          <li><b>Subdomain deception</b> — <code>apple.com.secure-billing.net</code> (owner is <code>secure-billing.net</code>).</li>
+          <li><b>Extra words &amp; hyphens</b> — <code>netflix-account-update.com</code>, <code>secure-paypal-login.com</code>.</li>
+          <li><b>Wrong TLD</b> — <code>yourbank.co</code> instead of <code>.com</code>, or unusual endings like <code>.zip</code>, <code>.tk</code>.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 5. SOCIAL ENGINEERING -->
+    <section class="section" id="social" data-title="Social Engineering">
+      <span class="eyebrow">The Human Factor</span>
+      <h2>The Psychology of the Con</h2>
+      <p class="lead">Phishing works because it hijacks normal human instincts. These are the six levers criminals pull — click each to learn the play and the defence.</p>
+
+      <div class="tactics" id="tactics"></div>
+
+      <div class="callout callout--info">
+        <strong>The golden rule</strong>
+        <p>Any message that creates <em>pressure to act quickly</em> and <em>discourages you from checking</em> deserves suspicion — no matter who it appears to be from. Slow down. Verify through a channel you trust.</p>
+      </div>
+    </section>
+
+    <!-- 6. SECURITY TIPS -->
+    <section class="section" id="tips" data-title="Stay Safe">
+      <span class="eyebrow">Daily Habits</span>
+      <h2>Your Everyday Defence Kit</h2>
+      <p class="lead">Simple habits that stop the vast majority of phishing. Tick them off as you commit to each.</p>
+
+      <ul class="tips-list" id="tipsList"></ul>
+
+      <div class="callout callout--danger">
+        <strong>If you think you've been phished</strong>
+        <ol>
+          <li><b>Don't panic, act fast.</b> Disconnect from the network if malware may have run.</li>
+          <li><b>Change your password</b> immediately — from a different, trusted device — and any account that shared it.</li>
+          <li><b>Enable / re-check MFA</b> on the affected account.</li>
+          <li><b>Report it</b> to your IT / security team right away. Reporting quickly limits the damage — you will not be blamed for reporting.</li>
+          <li><b>Watch for follow-ups</b> — attackers often use one compromised account to target others.</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- 7. CASE STUDIES -->
+    <section class="section" id="cases" data-title="Case Studies">
+      <span class="eyebrow">Real Breaches</span>
+      <h2>It Happens to Everyone</h2>
+      <p class="lead">Real breaches that started with a single phishing message — including some of the biggest names in tech.</p>
+
+      <div class="cases" id="cases"></div>
+    </section>
+
+    <!-- 8. QUIZ -->
+    <section class="section" id="quiz" data-title="Final Quiz">
+      <span class="eyebrow">Knowledge Check</span>
+      <h2>Test Yourself</h2>
+      <p class="lead">Ten questions covering everything above. You need <strong>8/10</strong> to pass. Good luck!</p>
+
+      <div class="quiz" id="quiz"></div>
+    </section>
+
+    <footer class="footer">
+      <p>PhishGuard Awareness Training · Built as an educational module. Stay curious, stay skeptical.</p>
+    </footer>
+  </main>
+
+  <script src="js/content.js"></script>
+  <script src="js/quiz.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

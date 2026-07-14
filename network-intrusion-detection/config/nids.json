@@ -1,0 +1,14 @@
+{
+  "vars": {
+    "HOME_NET": "10.0.0.0/8,192.168.0.0/16,172.16.0.0/12",
+    "EXTERNAL_NET": "any",
+    "HTTP_PORTS": "80,8080,8000",
+    "SSH_PORTS": "22"
+  },
+  "logs": {
+    "eve": "logs/eve.json",
+    "fast": "logs/fast.log",
+    "blocklist": "logs/blocked_ips.txt",
+    "actions": "logs/response_actions.log"
+  }
+}

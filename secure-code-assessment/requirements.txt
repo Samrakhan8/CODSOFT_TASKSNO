@@ -1,0 +1,5 @@
+# Application runtime
+Flask>=3.0
+
+# Security assessment tooling (static analysis)
+bandit>=1.7

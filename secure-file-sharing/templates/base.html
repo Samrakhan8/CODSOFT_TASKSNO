@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SecureShare</title>
+  <style>
+    :root {
+      --bg:#f6f7f9; --card:#ffffff; --edge:#e2e6ea; --ink:#1a1f26;
+      --muted:#68727e; --accent:#2f6df6; --danger:#d1435b; --ok:#1f9d6b;
+    }
+    @media (prefers-color-scheme: dark) {
+      :root { --bg:#12151a; --card:#1a1f27; --edge:#2a313b; --ink:#e7ecf2;
+        --muted:#93a0ad; --accent:#5b8cff; }
+    }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--bg); color:var(--ink);
+      font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+      line-height:1.5; }
+    header { background:var(--card); border-bottom:1px solid var(--edge);
+      padding:14px 24px; display:flex; align-items:center; gap:18px; }
+    header .brand { font-weight:700; letter-spacing:.2px; }
+    header .brand b { color:var(--accent); }
+    header nav { margin-left:auto; display:flex; gap:16px; align-items:center; }
+    header a { color:var(--ink); text-decoration:none; font-size:14px; }
+    header a:hover { color:var(--accent); }
+    header .who { color:var(--muted); font-size:13px; }
+    main { max-width:960px; margin:0 auto; padding:28px 24px; }
+    h1 { font-size:22px; margin:0 0 6px; }
+    h2 { font-size:15px; color:var(--muted); text-transform:uppercase;
+      letter-spacing:.5px; margin:28px 0 12px; }
+    .card { background:var(--card); border:1px solid var(--edge);
+      border-radius:12px; padding:20px; margin-bottom:18px; }
+    label { display:block; font-size:13px; color:var(--muted); margin:10px 0 4px; }
+    input, select { width:100%; padding:9px 11px; border:1px solid var(--edge);
+      border-radius:8px; background:var(--bg); color:var(--ink); font-size:14px; }
+    button { background:var(--accent); color:#fff; border:0; border-radius:8px;
+      padding:9px 16px; font-size:14px; cursor:pointer; }
+    button:hover { filter:brightness(1.05); }
+    button.ghost { background:transparent; color:var(--accent);
+      border:1px solid var(--edge); }
+    button.danger { background:var(--danger); }
+    table { width:100%; border-collapse:collapse; font-size:14px; }
+    th, td { text-align:left; padding:10px 8px; border-bottom:1px solid var(--edge);
+      vertical-align:top; }
+    th { color:var(--muted); font-size:12px; text-transform:uppercase;
+      letter-spacing:.4px; }
+    .mono { font-family:"Cascadia Code",Consolas,monospace; font-size:12px; }
+    .tag { display:inline-block; font-size:11px; padding:2px 9px; border-radius:20px;
+      background:var(--bg); border:1px solid var(--edge); color:var(--muted); }
+    .tag.admin { color:var(--danger); border-color:var(--danger); }
+    .flash { background:var(--card); border:1px solid var(--accent);
+      border-radius:10px; padding:12px 16px; margin-bottom:14px; font-size:14px;
+      word-break:break-word; }
+    .row-actions { display:flex; flex-wrap:wrap; gap:8px; align-items:end; }
+    .row-actions form { display:flex; gap:6px; align-items:end; }
+    .row-actions input, .row-actions select { width:auto; padding:6px 8px; }
+    .muted { color:var(--muted); font-size:13px; }
+    .table-wrap { overflow-x:auto; }
+  </style>
+</head>
+<body>
+  <header>
+    <span class="brand"><b>&#128274;</b> SecureShare</span>
+    <nav>
+      {% if user %}
+        <a href="{{ url_for('dashboard') }}">Files</a>
+        {% if user['role'] == 'admin' %}<a href="{{ url_for('admin') }}">Admin</a>{% endif %}
+        <span class="who">{{ user['username'] }}
+          <span class="tag {{ 'admin' if user['role']=='admin' else '' }}">{{ user['role'] }}</span>
+        </span>
+        <a href="{{ url_for('logout') }}">Sign out</a>
+      {% else %}
+        <a href="{{ url_for('login') }}">Sign in</a>
+        <a href="{{ url_for('register') }}">Register</a>
+      {% endif %}
+    </nav>
+  </header>
+  <main>
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for m in messages %}<div class="flash">{{ m }}</div>{% endfor %}
+      {% endif %}
+    {% endwith %}
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>

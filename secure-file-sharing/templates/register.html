@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Create account</h1>
+  <p class="muted">New accounts get the <span class="tag">user</span> role by default.</p>
+  <div class="card" style="max-width:420px">
+    <form method="post">
+      <label for="u">Username <span class="muted">(min 3 characters)</span></label>
+      <input id="u" name="username" autocomplete="username" autofocus>
+      <label for="p">Password <span class="muted">(min 8 characters)</span></label>
+      <input id="p" name="password" type="password" autocomplete="new-password">
+      <div style="margin-top:16px"><button type="submit">Register</button></div>
+    </form>
+  </div>
+  <p class="muted">Already registered? <a href="{{ url_for('login') }}">Sign in</a>.</p>
+{% endblock %}

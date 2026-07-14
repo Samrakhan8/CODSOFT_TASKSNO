@@ -1,0 +1,4 @@
+# Packet parsing / capture. Reading and writing pcap files works out of the
+# box; LIVE capture additionally needs the Npcap driver on Windows
+# (https://npcap.com) or libpcap on Linux/macOS.
+scapy>=2.5.0

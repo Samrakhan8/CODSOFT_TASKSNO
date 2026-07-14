@@ -1,0 +1,29 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# Databases
+*.db
+*.sqlite3
+
+# Secure-file-sharing: never commit encrypted blobs or the master key
+secure-file-sharing/storage/*.enc
+secure-file-sharing/storage/.masterkey
+
+# NIDS runtime artifacts
+network-intrusion-detection/logs/*.json
+network-intrusion-detection/logs/*.log
+network-intrusion-detection/logs/*.txt
+network-intrusion-detection/pcaps/*.pcap
+network-intrusion-detection/dashboard/report.html
+
+# Node
+node_modules/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp

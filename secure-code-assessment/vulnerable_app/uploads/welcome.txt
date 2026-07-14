@@ -1,0 +1,5 @@
+Welcome to TaskVault.
+
+This is a sample file in the uploads directory so the download endpoint has a
+legitimate file to serve. In the vulnerable app, that same endpoint can be
+tricked into serving files OUTSIDE this directory (path traversal, finding F-06).

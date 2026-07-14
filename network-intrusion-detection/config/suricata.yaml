@@ -1,0 +1,68 @@
+%YAML 1.1
+---
+# ============================================================================
+# suricata.yaml - minimal configuration for running rules/local.rules under a
+# real Suricata install, so this project's detection rules are portable to the
+# industry-standard engine as well as the bundled Python one.
+#
+#   suricata -c config/suricata.yaml -r pcaps/attacks.pcap -l logs/
+#   suricata -c config/suricata.yaml -i "Ethernet"          # live
+#
+# The same $HOME_NET / $EXTERNAL_NET variables and .rules file drive both
+# engines; only the runner differs.
+# ============================================================================
+
+vars:
+  address-groups:
+    HOME_NET: "[10.0.0.0/8,192.168.0.0/16,172.16.0.0/12]"
+    EXTERNAL_NET: "!$HOME_NET"
+    HTTP_SERVERS: "$HOME_NET"
+  port-groups:
+    HTTP_PORTS: "[80,8080,8000]"
+    SSH_PORTS: "22"
+
+default-rule-path: ../rules
+rule-files:
+  - local.rules
+
+default-log-dir: ../logs/
+
+# Suricata's own eve.json - the bundled Python engine writes the same format.
+outputs:
+  - eve-log:
+      enabled: yes
+      filetype: regular
+      filename: eve.json
+      types:
+        - alert:
+            payload: yes
+            packet: yes
+        - stats:
+            interval: 30
+  - fast:
+      enabled: yes
+      filename: fast.log
+  - stats:
+      enabled: yes
+      filename: stats.log
+
+# Reasonable defaults for offline (pcap) analysis.
+af-packet:
+  - interface: default
+
+app-layer:
+  protocols:
+    http:
+      enabled: yes
+    tls:
+      enabled: yes
+    ssh:
+      enabled: yes
+    dns:
+      enabled: yes
+
+logging:
+  default-log-level: notice
+  outputs:
+    - console:
+        enabled: yes

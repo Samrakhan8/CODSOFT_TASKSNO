@@ -1,0 +1,3 @@
+# Preferred capture backend. Gives rich protocol dissection.
+# On Windows you also need the Npcap driver: https://npcap.com/#download
+scapy>=2.5.0

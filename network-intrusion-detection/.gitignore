@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+logs/*.json
+logs/*.log
+logs/*.txt
+dashboard/report.html

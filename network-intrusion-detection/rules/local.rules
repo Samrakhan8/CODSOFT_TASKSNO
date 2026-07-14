@@ -1,0 +1,60 @@
+# ============================================================================
+# local.rules - custom detection rules for the NIDS.
+#
+# Syntax is Snort/Suricata-compatible:
+#   action proto src_ip src_port -> dst_ip dst_port (options)
+# $HOME_NET / $EXTERNAL_NET are defined in config/nids.json (and, for real
+# Suricata, in config/suricata.yaml). SIDs 1000000+ are the local range.
+#
+# 'alert' logs; 'drop'/'reject' additionally trigger the automated responder.
+# ============================================================================
+
+# --- Reconnaissance ---------------------------------------------------------
+
+# ICMP echo request (ping) - a host is probing reachability.
+alert icmp $EXTERNAL_NET any -> $HOME_NET any (msg:"ICMP ping / host discovery"; itype:8; classtype:misc-activity; sid:1000001; rev:1;)
+
+# TCP SYN port scan: many SYN-only packets from one source in a short window.
+alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"TCP SYN port scan detected"; flags:S; detection_filter:track by_src, count 15, seconds 5; classtype:network-scan; sid:1000002; rev:1;)
+
+# NULL scan (no flags set) - a classic stealth/nmap probe.
+alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"TCP NULL scan (no flags)"; flags:0; classtype:attempted-recon; sid:1000003; rev:1;)
+
+# --- Brute force / access -------------------------------------------------
+
+# SSH brute force: repeated new connections to port 22 from one source.
+alert tcp $EXTERNAL_NET any -> $HOME_NET 22 (msg:"SSH brute force / repeated login attempts"; flags:S; detection_filter:track by_src, count 5, seconds 30; classtype:attempted-admin; sid:1000004; rev:1;)
+
+# Telnet is cleartext and should not be used - policy violation.
+alert tcp $HOME_NET any -> $EXTERNAL_NET 23 (msg:"Cleartext Telnet connection (policy violation)"; flags:S; classtype:policy-violation; sid:1000005; rev:1;)
+
+# --- Web attacks ----------------------------------------------------------
+
+# SQL injection: UNION SELECT in an HTTP request.
+alert tcp $EXTERNAL_NET any -> $HOME_NET [80,8080,8000] (msg:"SQL injection - UNION SELECT"; content:"union"; nocase; content:"select"; nocase; classtype:web-application-attack; sid:1000010; rev:1;)
+
+# SQL injection: classic OR 1=1 tautology.
+alert tcp $EXTERNAL_NET any -> $HOME_NET [80,8080,8000] (msg:"SQL injection - OR 1=1 tautology"; content:"or 1=1"; nocase; classtype:web-application-attack; sid:1000011; rev:1;)
+
+# Directory traversal: ../ sequences in the request (hex to match reliably).
+alert tcp $EXTERNAL_NET any -> $HOME_NET [80,8080,8000] (msg:"Directory traversal attempt (../)"; content:"|2e 2e 2f|"; classtype:web-application-attack; sid:1000012; rev:1;)
+
+# Cross-site scripting: <script> in a request.
+alert tcp $EXTERNAL_NET any -> $HOME_NET [80,8080,8000] (msg:"Cross-site scripting (<script>)"; content:"<script"; nocase; classtype:web-application-attack; sid:1000013; rev:1;)
+
+# Scanner user-agents (sqlmap / nikto / nmap / masscan).
+alert tcp $EXTERNAL_NET any -> $HOME_NET [80,8080,8000] (msg:"Known web scanner user-agent"; content:"User-Agent:"; pcre:"/User-Agent:[^\r\n]*(sqlmap|nikto|nmap|masscan|dirbuster)/i"; classtype:attempted-recon; sid:1000014; rev:1;)
+
+# --- Malware / exploit / exfil --------------------------------------------
+
+# Reject inbound web shell command execution attempt.
+drop tcp $EXTERNAL_NET any -> $HOME_NET [80,8080,8000] (msg:"Possible web shell command execution"; content:"cmd="; nocase; content:"|2f|bin|2f|"; classtype:web-application-attack; sid:1000020; rev:1;)
+
+# Cleartext credentials leaving the network (password= over HTTP).
+alert tcp $HOME_NET any -> $EXTERNAL_NET [80,8080,8000] (msg:"Cleartext credentials in HTTP (password=)"; content:"password="; nocase; classtype:policy-violation; sid:1000021; rev:1;)
+
+# Oversized ICMP payload - possible ICMP tunnel / covert channel.
+alert icmp $HOME_NET any -> $EXTERNAL_NET any (msg:"Large ICMP payload - possible tunnel/exfil"; dsize:>800; classtype:bad-unknown; sid:1000022; rev:1;)
+
+# EICAR test-string transfer (safe malware canary).
+alert tcp $EXTERNAL_NET any -> $HOME_NET any (msg:"EICAR test file transfer"; content:"EICAR-STANDARD-ANTIVIRUS-TEST-FILE"; classtype:trojan-activity; sid:1000023; rev:1;)

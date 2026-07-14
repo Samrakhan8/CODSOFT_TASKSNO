@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2>Search</h2>
+  <form method="get">
+    <input name="q" value="{{ q }}" placeholder="search">
+    <button>Search</button>
+  </form>
+  {% if q %}<p>You searched for: {{ q }}</p>{% endif %}
+{% endblock %}

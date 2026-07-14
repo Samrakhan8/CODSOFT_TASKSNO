@@ -1,0 +1,4 @@
+Welcome to TaskVault (hardened build).
+
+The download endpoint here serves only files inside this uploads directory.
+Any attempt to escape it with ../ is rejected (see finding F-06 and its fix).

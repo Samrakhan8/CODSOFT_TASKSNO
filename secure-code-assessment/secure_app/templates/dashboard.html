@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+  <h2>Your notes</h2>
+  <ul>
+    {% for n in notes %}
+      <li><a href="/note/{{ n['id'] }}">{{ n['title'] }}</a></li>
+    {% endfor %}
+  </ul>
+  <form method="post" action="/note/add">
+    <input name="title" placeholder="title">
+    <textarea name="body" placeholder="body"></textarea>
+    <button>Add note</button>
+  </form>
+{% endblock %}

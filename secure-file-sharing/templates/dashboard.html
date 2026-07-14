@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Your files</h1>
+  <p class="muted">Files are encrypted with AES-256-GCM before they touch the
+    disk. You see files you own{% if user['role']=='admin' %} (as admin, all
+    files){% else %}, plus any shared with you or your role{% endif %}.</p>
+
+  <div class="card">
+    <form method="post" action="{{ url_for('upload') }}" enctype="multipart/form-data">
+      <label for="f">Upload a file <span class="muted">(max {{ max_mb }} MB, encrypted at rest)</span></label>
+      <div class="row-actions">
+        <input id="f" type="file" name="file" required style="width:auto">
+        <button type="submit">Upload &amp; encrypt</button>
+      </div>
+    </form>
+  </div>
+
+  <h2>Stored files</h2>
+  {% if not files %}
+    <p class="muted">No files yet. Upload one above.</p>
+  {% else %}
+  <div class="table-wrap">
+  <table>
+    <thead>
+      <tr><th>Name</th><th>Owner</th><th>Size</th><th>Uploaded</th><th>Actions</th></tr>
+    </thead>
+    <tbody>
+    {% for f in files %}
+      {% set manage = (user['role']=='admin' or f['owner']==user['username']) %}
+      <tr>
+        <td>{{ f['orig_name'] }}</td>
+        <td>{{ f['owner'] }}{% if f['owner']==user['username'] %} <span class="tag">you</span>{% endif %}</td>
+        <td class="muted">{{ '%.1f'|format(f['size']/1024) }} KB</td>
+        <td class="muted">{{ f['created_at']|dt }}</td>
+        <td>
+          <div class="row-actions">
+            <a href="{{ url_for('download', file_id=f['id']) }}"><button type="button" class="ghost">Download</button></a>
+            {% if manage %}
+              <form method="post" action="{{ url_for('share', file_id=f['id']) }}" title="Create a temporary link">
+                <input name="minutes" type="number" value="60" min="1" title="minutes" style="width:70px">
+                <input name="max_downloads" type="number" value="0" min="0" title="max downloads (0 = unlimited)" style="width:70px">
+                <button type="submit" class="ghost">Share link</button>
+              </form>
+              <form method="post" action="{{ url_for('grant', file_id=f['id']) }}" title="Grant access">
+                <select name="principal_type" style="width:auto">
+                  <option value="user">user</option>
+                  <option value="role">role</option>
+                </select>
+                <input name="principal" placeholder="name / role" style="width:110px">
+                <button type="submit" class="ghost">Grant</button>
+              </form>
+              <form method="post" action="{{ url_for('delete', file_id=f['id']) }}"
+                    onsubmit="return confirm('Delete {{ f['orig_name'] }}?')">
+                <button type="submit" class="danger">Delete</button>
+              </form>
+            {% endif %}
+          </div>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  </div>
+  {% endif %}
+{% endblock %}

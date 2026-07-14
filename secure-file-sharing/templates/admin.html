@@ -1,0 +1,74 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Admin</h1>
+  <p class="muted">Manage roles, review all files, and read the audit trail.</p>
+
+  <h2>Users &amp; roles</h2>
+  <div class="card">
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>Username</th><th>Role</th><th>Joined</th><th>Change role</th></tr></thead>
+      <tbody>
+      {% for u in users %}
+        <tr>
+          <td>{{ u['username'] }}</td>
+          <td><span class="tag {{ 'admin' if u['role']=='admin' else '' }}">{{ u['role'] }}</span></td>
+          <td class="muted">{{ u['created_at']|dt }}</td>
+          <td>
+            {% if u['username'] != user['username'] %}
+              <form method="post" action="{{ url_for('set_role') }}" class="row-actions">
+                <input type="hidden" name="username" value="{{ u['username'] }}">
+                <select name="role" style="width:auto">
+                  {% for r in roles %}<option value="{{ r }}" {{ 'selected' if r==u['role'] else '' }}>{{ r }}</option>{% endfor %}
+                </select>
+                <button type="submit" class="ghost">Update</button>
+              </form>
+            {% else %}<span class="muted">(you)</span>{% endif %}
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <h2>All files ({{ files|length }})</h2>
+  <div class="card">
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>Name</th><th>Owner</th><th>Size</th><th>File ID</th><th>Uploaded</th></tr></thead>
+      <tbody>
+      {% for f in files %}
+        <tr>
+          <td>{{ f['orig_name'] }}</td>
+          <td>{{ f['owner'] }}</td>
+          <td class="muted">{{ '%.1f'|format(f['size']/1024) }} KB</td>
+          <td class="mono">{{ f['id'][:12] }}&hellip;</td>
+          <td class="muted">{{ f['created_at']|dt }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <h2>Audit log (latest 50)</h2>
+  <div class="card">
+    <div class="table-wrap">
+    <table>
+      <thead><tr><th>Time</th><th>Actor</th><th>Action</th><th>Target</th><th>Detail</th></tr></thead>
+      <tbody>
+      {% for a in audit %}
+        <tr>
+          <td class="muted">{{ a['ts']|dt }}</td>
+          <td>{{ a['actor'] or 'link' }}</td>
+          <td><span class="tag">{{ a['action'] }}</span></td>
+          <td class="mono">{{ (a['target'] or '')[:12] }}</td>
+          <td class="muted">{{ a['detail'] or '' }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    </div>
+  </div>
+{% endblock %}
